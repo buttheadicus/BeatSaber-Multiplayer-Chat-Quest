@@ -1,0 +1,37 @@
+## OS / tooling
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+## Visual Studio / MSBuild
+**/bin/
+**/obj/
+**/*.user
+**/*.rsuser
+**/.vs/
+**/*.suo
+
+## Rider / VS Code / IDE
+.idea/
+.vscode/*
+!.vscode/settings.json.example
+
+## CMake / native Quest build (once added from quest-mod-template)
+**/build/
+**/cmake-build-*/
+**/CMakeFiles/
+**/*.o
+**/compile_commands.json
+
+## Quest / qpm typical externals & outputs
+**/extern/
+**/libs/
+**/ndkpath.txt
+
+## Mod artifacts
+*.qmod
+*.so
+
+## Logs
+*.log
