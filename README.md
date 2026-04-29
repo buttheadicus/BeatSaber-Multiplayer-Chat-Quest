@@ -1,4 +1,4 @@
-# Beat Saber Multiplayer Chat — Quest (QMOD)
+# Beat Saber Multiplayer Chat-Quest (QMOD)
 
 Standalone **Quest / BMBF** port of **[Multiplayer Chat](https://github.com/buttheadicus/BeatSaber-Multiplayer-Chat)** on PC (BSIPA / Zenject). Matching PC multiplayer on the wire is a **goal**, not guaranteed initially.
 
