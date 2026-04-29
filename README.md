@@ -6,7 +6,7 @@ Standalone **Quest / BMBF** port of **[Multiplayer Chat](https://github.com/butt
 
 Bootstrap only: **`docs/NEXT_STEPS.md`** walks through remote setup and the usual Quest toolchain (C++ hooks, qpm, [quest-mod-template](https://github.com/Lauriethefish/quest-mod-template)).
 
-The PC mod is **C#**; Beat Saber Quest mods are typically **C++** + codegen + `.qmod` packaging—plan architecture before dumping PC sources in.
+The PC mod is **C#**; Beat Saber Quest mods are typically **C++** + codegen + `.qmod` packaging. plan architecture before dumping PC sources in.
 
 ## Repo
 
