@@ -49,16 +49,17 @@ When this mod is ready, you will ship a **`.qmod`**; players add it through MBF 
 
 ---
 
-## C. Bootstrap the native mod project (developers)
+## C. Native mod project (in this repo)
 
-This repo is **docs + planning** until you add the real build. The standard starting point is **[quest-mod-template](https://github.com/Lauriethefish/quest-mod-template)**:
+The **quest-mod-template** layout is already present: root **`CMakeLists.txt`**, **`qpm.json`**, **`src/main.cpp`**, **`scripts/`**. Install **qpm** and the **Android NDK**, add **`ndkpath.txt`**, then:
 
-1. Use the template (or copy its layout) into this repo or a subfolder, as you prefer.
-2. Install **qpm** and run **`qpm restore`** when `qpm.json` changes.
-3. Set **Android NDK** path in the project (use **forward slashes** in config where the template asks).
-4. Run **`build.ps1`** to build, **`buildQMOD.ps1`** to produce a **`.qmod`** for testing.
+```powershell
+qpm restore
+qpm s build
+qpm s qmod
+```
 
-**Extra reading**
+Details: **[README.md](../README.md)** (Build section). Extra reading:
 
 - [Beat Saber Quest modding guide (danrouse)](https://github.com/danrouse/beatsaber-quest-modding-guide)
 - [Porting / hooks / codegen context (Fernthedev)](https://github.com/Fernthedev/beatsaber-quest-porting-guide)
@@ -69,8 +70,8 @@ The PC Multiplayer Chat mod is **C# (BSIPA)**. Quest mods here are usually **C++
 
 ## D. Parity with PC Multiplayer Chat
 
-High-level goals and migration order live in the **PC** repository:
+Technical wire spec (**encryption, LiteNetLib order, checklist**) lives in **[PORTING_DRAFT.md](PORTING_DRAFT.md)** in this repo. Maintain it here when protocols change.
 
-`BeatSaber-Multiplayer-Chat/BeatSaber-Multiplayer-Chat-Quest.md`
+Upstream PC mod repository: **[Multiplayer Chat](https://github.com/buttheadicus/BeatSaber-Multiplayer-Chat)** (paths under `MultiplayerChat` C# sources use the same filenames referenced in `PORTING_DRAFT.md`).
 
-Update that file when you lock wire format, networking, or UI decisions for Quest.
+Optional: the PC repo keeps a **`BeatSaber-Multiplayer-Chat-Quest.md`** stub that points readers to **`docs/PORTING_DRAFT.md`** here.
