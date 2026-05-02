@@ -4,12 +4,24 @@
 
 **Status:** Native skeleton from **quest-mod-template** is in repo (`qpm.json`, `CMakeLists.txt`, `src/`). Run **`qpm restore`** and **`qpm s build`** when your NDK and codegen stack are ready. Transport hooks on Quest are TBD.
 
+Use PC **`manifest.json`** and **`release/manifest.json`** as **version authority** (current tree: **0.3.1**, **`gameVersion`** **1.40.1**).
+
+**Whenever PC ships a new rev, refresh this draft from upstream:**
+
+1. **`Network/*.cs`** for any new **`MpPacket`** subclasses; mirror **`Serialize`/`Deserialize`** order in this doc.
+2. **`Core/ChatManager.cs`** **`RegisterPacketCallbacks`** for what registers on wire (and **ordering**: PC registers **`ListenToNotifyPacket`** **last** so existing message type ids stay stable).
+3. **`Core/EncryptionManager.cs`** if rumors of crypto tweaks (**usually rare**, high impact).
+
+**Bugfix / settings migration** — commit **`c546e6e`**: mod UI options move from **PlayerPrefs** (and removed **`ModFlagsFile`**) into **`Settings/ModSettingsPersistence.cs`**, file **`MultiplayerChat.Settings.json`** next to Chat ID under **`ChatIdFilePaths`** (**`%UserProfile%\AppData\LocalLow\Hyperbolic Magnetism\Beat Saber\`**). Migrates legacy keys and **`MultiplayerChat.ModFlags.json`** (**`enableCau`** is a field in settings JSON now). **No change** to **`EncryptionManager`** or **`Network/*`** packet layouts in that commit.
+
+**Wire note (this upstream snapshot):** there is **no** **`MpCustomAvatarPosePacket`** in **`Network/`**; only **sections 3.1 through 3.10** below apply. If a future PC branch re-adds avatar pose packets, re-list them here.
+
 ---
 
 ## 1. PC reference stack (what you are mirroring in behavior)
 
 - **Bootstrap:** IPA plugin in `Plugin.cs`; Zenject bindings for lobby-scoped chat.
-- **Custom packets:** `MultiplayerCore.Networking.Abstractions.MpPacket`, serialized with **LiteNetLib** (`NetDataWriter` / `NetDataReader`). Registration is via **`MpPacketSerializer`** from **Multiplayer Extensions** (`ChatManager.RegisterPacketCallbacks`, `ModPresenceManager` for presence only).
+- **Custom packets:** `MultiplayerCore.Networking.Abstractions.MpPacket`, serialized with **LiteNetLib** (`NetDataWriter` / `NetDataReader`). Registration is via **`MpPacketSerializer`** from **Multiplayer Extensions** (`ChatManager.RegisterPacketCallbacks`, `ModPresenceManager` for presence only). **`ListenToNotifyPacket`** is registered **after** all other chat packets on purpose (**stability** comment in **`ChatManager.RegisterPacketCallbacks`**).
 - **Discriminators:** Each `MpPacket` subtype gets a runtime packet id inside Multiplayer Extensions / Multiplayer Core. Those **numeric ids are not defined in this repository** and can change with ME versions. Any Quest-side stack must either use a compatible registrar or negotiate a compatible framing layer. Payload layout **below the discriminator** must match LiteNetLib order so bytes match once the envelope is peeled.
 
 ---
@@ -108,6 +120,20 @@ Not encrypted.
 
 | IsDeaf (byte), SenderChatId, SenderNameColor |
 
+### 3.11 Non-wire deltas to mirror when you chase perf / UX parity
+
+| Area | PC hints |
+|------|-----------|
+| Persistent mod settings | **`Settings/ModSettingsPersistence.cs`**, **`ChatIdFilePaths`** (**`MultiplayerChat.Settings.json`** in BS **LocalLow**) |
+| Chat bubble churn | **`UI/ChatBubbleManager.cs`** |
+| Hot mic + pipeline | **`Core/VoiceHotMicManager.cs`** |
+| Ducking / VOIP mixer | **`Core/GlobalChatAudioHost.cs`** |
+| Update checks | **`Core/VersionChecker.cs`**, **`Core/GitHubReleaseVersion.cs`** |
+| CAU exe delete on boot | **`Core/CauBootstrap.cs`** (**`enableCau`** in **`ModSettings`** / persistence JSON) |
+| Mic failure lines | **`Core/ChatSystemErrorMessages.cs`** |
+| SLZ companion | **`Core/SlzMarkerProof.cs`**, **`Core/SlzMode.cs`** + **`ModPresencePacket.IsSlzCompanionClient`** |
+| Avatar cosmetics (client only) | **`AvatarExtras`** under plugin; **no** extra **`MpPacket`** in **`Network/`** on this tree |
+
 ---
 
 ## 4. Persistent Chat ID (0.2.0)
@@ -137,8 +163,8 @@ Routing rules (`global` vs `DM`) are summarized in **`ChatPacketIdValidation`** 
 1. Quest mod loads (skeleton in repo; **`qpm restore`** + **`qpm s build`** produce `libmultiplayerchat.so`, then **`qpm s qmod`** when NDK and codegen are configured).
 2. Identify **multiplayer packet API** on Quest (same logical lobby + custom messages toward PC parity).
 3. Implement **EncryptionManager-equivalent** and **EncryptedChatPacket** serde; verify interoperability with PC in a controlled lobby test.
-4. **ModPresencePacket** plus remaining packet types needed for chosen feature slice.
-5. Voice path: **VoiceMessageCodec** + capture/playback hooks on Quest.
+4. **ModPresencePacket** plus every other packet type needed for your slice (match **`ChatManager`** registration list; **currently 3.1 through 3.10** on upstream **0.3.1**).
+5. Voice path: **VoiceMessageCodec** + capture/playback hooks on Quest; mirror ducking behavior from **`GlobalChatAudioHost`** intent when applicable.
 6. UI last (different stack than BSML/HMUI).
 
 ---
@@ -152,4 +178,4 @@ Routing rules (`global` vs `DM`) are summarized in **`ChatPacketIdValidation`** 
 
 ---
 
-*Last draft pass: serialized layout matches upstream PC repo paths `Network/*.cs`, `Core/EncryptionManager.cs`, `Core/VoiceMessageCodec.cs`, `Core/ChatPacketIdValidation.cs`.*
+*Last draft sync: **`c546e6e`** (**settings AppData** + UI labels), upstream **`Network/`** (**10** **`MpPacket`** types, **no** avatar pose packet), **`ChatManager`** callback order, **`Core/EncryptionManager.cs`**, **`Settings/ModSettingsPersistence.cs`**, **`ChatIdFilePaths.cs`**. Re-run `git log Network/ Core/ChatManager.cs` after each PC pull.*

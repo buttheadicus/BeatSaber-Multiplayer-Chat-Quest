@@ -17,29 +17,29 @@
     "workspace": {
       "scripts": {
         "build": [
-          "pwsh ./scripts/build.ps1"
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/build.ps1"
         ],
         "clean": [
-          "pwsh ./scripts/build.ps1 -clean"
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/build.ps1 -clean"
         ],
         "copy": [
-          "pwsh ./scripts/copy.ps1 $0:?"
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/copy.ps1 $0:?"
         ],
         "logcat": [
-          "pwsh ./scripts/start-logging.ps1"
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/start-logging.ps1"
         ],
         "qmod": [
-          "pwsh ./scripts/build.ps1",
-          "pwsh ./scripts/createqmod.ps1"
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/build.ps1",
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/createqmod.ps1"
         ],
         "restart": [
-          "pwsh ./scripts/restart-game.ps1"
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/restart-game.ps1"
         ],
         "stack": [
-          "pwsh ./scripts/ndk-stack.ps1"
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/ndk-stack.ps1"
         ],
         "tomb": [
-          "pwsh ./scripts/pull-tombstone.ps1"
+          "powershell.exe -NoProfile -ExecutionPolicy Bypass -File ./scripts/pull-tombstone.ps1"
         ]
       },
       "qmodIncludeDirs": [
